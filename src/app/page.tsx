@@ -1,17 +1,74 @@
 "use client";
 import { AiChat, ChatAdapter, StreamingAdapterObserver } from "@nlux/react";
 import "@nlux/themes/nova.css";
-import { getApiUrl } from "@lib/api.ts";
-import { constants } from "@lib/constants.ts";
+import { ChatResponseRenderer } from "@components/ui";
+import {
+  getApiUrl,
+  constants,
+  personaOptions,
+  conversationOptions,
+  getPromptType,
+  getPromptEndpoint,
+  handleAsStreaming,
+} from "@lib/index";
 
 export default function Chat() {
   const chatAdapter: ChatAdapter = {
+    // batchText: async (prompt: string, extras: ChatAdapterExtras): Promise<string> => {
+    //   const promptType = getPromptType(prompt);
+    //   console.log("page -> batchText handler for prompt of type", promptType, "prompt", prompt);
+    //
+    //   if (!handleAsBatch(promptType)) {
+    //     console.log("page -> skipping as prompt type should not be handled as batch");
+    //     return "";
+    //   }
+    //
+    //   const apiEndpoint = getPromptEndpoint(promptType);
+    //
+    //   return fetch(apiEndpoint, {
+    //     method: "POST",
+    //     body: JSON.stringify({ prompt }),
+    //     headers: { "Content-Type": "application/json" },
+    //   })
+    //     .then((response) => response.json())
+    //     .then((json) => json.message);
+    // },
     streamText: async (prompt: string, observer: StreamingAdapterObserver) => {
-      const response = await fetch(getApiUrl(constants.routes.api.chat), {
+      const promptType = getPromptType(prompt);
+      console.log("page -> streamText handler for prompt of type", promptType, "prompt", prompt);
+
+      // if (!handleAsStreaming(promptType)) {
+      //   console.log("page -> skipping as prompt type should not be handled as streaming");
+      //   observer.next("I can't generate images...");
+      //   observer.complete();
+      //   return;
+      // }
+
+      const apiEndpoint = getPromptEndpoint(promptType);
+      const response = await fetch(getApiUrl(apiEndpoint), {
         method: "POST",
         body: JSON.stringify({ prompt: prompt }),
         headers: { "Content-Type": "application/json" },
       });
+
+      if (!handleAsStreaming(promptType)) {
+        console.log("page -> handling as BATCH -> response", response);
+
+        if (promptType === constants.openAI.promptTypes.generateImage) {
+          const message = await response.json();
+          // console.log("page -> BATCH response -> image data", message);
+          observer.next("data:image/jpeg;base64," + message + "");
+        } else {
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          // console.log("page -> BATCH response -> audioUrl", audioUrl);
+          observer.next("audio:" + audioUrl);
+        }
+
+        observer.complete();
+        return;
+      }
+
       if (response.status !== 200) {
         observer.error(new Error("Failed to connect to the server"));
         return;
@@ -48,32 +105,13 @@ export default function Chat() {
       <div className="z-10 w-full max-w-3xl items-center justify-between font-mono text-sm lg:flex">
         <AiChat
           adapter={chatAdapter}
-          conversationOptions={{
-            conversationStarters: [
-              {
-                label: "Random recipe",
-                prompt: "Give me a random recipe for an Asian-themed dish.",
-              },
-              {
-                label: "Suggest dish for potatoes and tomatoes",
-                prompt: "What can I cook with tomatoes, potatoes, onions, spices and oil?",
-              },
-              {
-                label: "Improve the following recipe for me...",
-                prompt: "Recipe for an aloo paratha dish: Wheat flour, Potatoes (boiled and mashed), Green Chilli",
-              },
-            ],
+          conversationOptions={conversationOptions}
+          personaOptions={personaOptions}
+          composerOptions={{
+            hideStopButton: false,
           }}
-          personaOptions={{
-            assistant: {
-              name: "Mr. Chef",
-              avatar: "https://docs.nlkit.com/nlux/images/personas/harry-botter.png",
-              tagline: "Helping you cook the next meme!",
-            },
-            user: {
-              name: "Thingmablob",
-              avatar: "https://docs.nlkit.com/nlux/images/personas/alex.png",
-            },
+          messageOptions={{
+            responseRenderer: ChatResponseRenderer,
           }}
         />
       </div>
