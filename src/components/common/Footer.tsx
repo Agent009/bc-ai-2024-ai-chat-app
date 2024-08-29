@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import CX_Logo_Dark from "@images/logos/cx-logo-dark.svg";
 import Arrow from "@images/icons/Arrow";

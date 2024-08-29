@@ -26,7 +26,17 @@ export const constants = Object.freeze({
   // 3rd Party, Integrations
   openAI: {
     apiKey: process.env.OPENAI_API_KEY,
-    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+    models: {
+      chat: process.env.OPENAI_CHAT_MODEL || "gpt-4o-mini",
+      genImage: process.env.OPENAI_GEN_IMAGE_MODEL || "dall-e-2",
+      genAudio: process.env.OPENAI_GEN_AUDIO_MODEL || "tts-1",
+      genAudioVoice: process.env.OPENAI_GEN_AUDIO_VOICE || "alloy",
+    },
+    promptTypes: {
+      chat: "chat",
+      generateImage: "generateImage",
+      generateAudio: "generateAudio",
+    },
     response: {
       default: "default",
       streaming: "streaming",
@@ -39,6 +49,8 @@ export const constants = Object.freeze({
     api: {
       base: "/api/",
       chat: "chat",
+      generateImage: "images",
+      generateAudio: "audio",
     },
   },
 });

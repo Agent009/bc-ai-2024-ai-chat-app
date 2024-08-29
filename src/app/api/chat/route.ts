@@ -1,11 +1,10 @@
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { NextResponse } from "next/server";
-import { constants } from "@lib/constants.ts";
+import { constants } from "@lib/index";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
-
 // IMPORTANT! Set the runtime to edge
 export const runtime = "edge";
 
@@ -14,7 +13,7 @@ export async function POST(req: Request) {
     const { prompt } = await req.json();
 
     const result = await streamText({
-      model: openai(constants.openAI.model),
+      model: openai(constants.openAI.models.chat),
       messages: [
         {
           role: "system",
@@ -26,7 +25,8 @@ export async function POST(req: Request) {
           content: prompt,
         },
       ],
-      async onFinish({ text, toolCalls, toolResults, usage, finishReason }) {
+      // async onFinish({ text, toolCalls, toolResults, usage, finishReason }) {
+      async onFinish() {
         // implement your own logic here, e.g. for storing messages or recording token usage
       },
     });
