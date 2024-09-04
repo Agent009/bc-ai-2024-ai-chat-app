@@ -1,7 +1,4 @@
 import { streamText } from "ai";
-// Uncomment to use remote OpenAI instance
-// import { openai } from "@ai-sdk/openai";
-// Uncomment to use local OpenAI instance
 import { createOpenAI } from "@ai-sdk/openai";
 import { NextResponse } from "next/server";
 import { constants } from "@lib/index";
@@ -16,7 +13,9 @@ export async function POST(req: Request) {
     const { prompt } = await req.json();
     // Uncomment to use local OpenAI instance
     const openai = createOpenAI({
-      baseURL: constants.openAI.localBaseURL,
+      baseURL: constants.openAI.useLocal ? constants.openAI.localBaseURL : undefined,
+      apiKey: constants.openAI.apiKey,
+      compatibility: "strict", // strict mode, enable when using the OpenAI API
     });
 
     const result = await streamText({

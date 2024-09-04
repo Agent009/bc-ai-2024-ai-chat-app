@@ -25,6 +25,7 @@ export const constants = Object.freeze({
   },
   // 3rd Party, Integrations
   openAI: {
+    useLocal: process.env.USE_LOCAL_AI === "true",
     localBaseURL: process.env.LOCAL_AI_BASE_URL,
     apiKey: process.env.OPENAI_API_KEY,
     models: {
