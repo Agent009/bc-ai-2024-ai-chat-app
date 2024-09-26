@@ -1,5 +1,7 @@
-# Encode_AI-and-GPT-Bootcamp-Q3-2024
-Creating a Simple Chat Page.
+# Mr. Chef - OpenAI Chat Page Experiement + Local Model Support
+
+* Sample OpenAI-powered chat application to help users create recipes from ingredients, or get instructions and ingredients for dishes.
+* Supports local AI models via [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
 ## Instructions / README
 * [Lesson-05 / exercises / 03-Chat-Page.md](https://github.com/Encode-Club-AI-Bootcamp/Generative-AI-Applications/blob/main/Lesson-05/exercises/03-Chat-Page.md)
