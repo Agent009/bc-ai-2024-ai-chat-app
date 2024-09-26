@@ -1,4 +1,4 @@
-# Mr. Chef - OpenAI Chat Page Experiement + Local Model Support
+# Mr. Chef - OpenAI Chat Page Experiment + Local Model Support
 
 * Sample OpenAI-powered chat application to help users create recipes from ingredients, or get instructions and ingredients for dishes.
 * Supports local AI models via [text-generation-webui](https://github.com/oobabooga/text-generation-webui)
